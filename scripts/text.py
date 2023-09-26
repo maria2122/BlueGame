@@ -18,10 +18,12 @@ class Text:
         self.display.blit(self.text, self.position)
 
     def draw_center(self):
-        self.display.blit(self.text, self.text_rect)
-
+        self.display.blit(self.text,
+                          self.text_rect)
+    
     def update_text(self, text, color):
-        self.text = self.font.render(text, True, color).convert_alpha()
+        self.text = self.font.render(text, True,
+                                     color).convert_alpha()
 
     def drawFade(self):
 
