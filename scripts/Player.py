@@ -46,6 +46,10 @@ class Player(pygame.sprite.Sprite):
                     self.rect.bottom = sprite.rect.top
                     self.on_ground = True
 
+                if self.direction.y < 0:
+                    self.direction.y=0
+                    self.rect.top = sprite.rect.bottom
+
     def animation(self, speed, n_img, path):
         self.tick += 1
         if self.tick > speed:

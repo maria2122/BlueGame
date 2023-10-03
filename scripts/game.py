@@ -18,6 +18,7 @@ class Game(Scene):
         self.stage = 0
         self.maps = [MAP0, MAP1, MAP2]
         self.current_level = Level(self.maps[self.stage])
+        self.active = True
 
     def events(self, event):
         pass
@@ -26,7 +27,16 @@ class Game(Scene):
         self.current_level.draw()
 
     def update(self):
+        if self.current_level.active == False and self.current_level.gameover == False:
+            self.stage+=1
+            if len(self.maps) == self.stage:
+                self.active = False
+            else:
+                self.current_level = Level(self.maps[self.stage])
+        elif self.current_level.active == True and self.current_level.gameover == True:
+            self.active = False
         self.current_level.update()
+
 
 
 
@@ -39,10 +49,21 @@ class Ui:
         self.hud2 = Obj("assets/player/idle_0.png", [74, 10], [self.ui_group])
         self.hud3 = Obj("assets/player/idle_0.png", [144, 10], [self.ui_group])
 
+        self.lifes = 3
+
+    def count_lifes(self):
+        if self.lifes == 2:
+            self.hud3.kill()
+        elif self.lifes == 1:
+            self.hud2.kill()
+        elif self.lifes == 0:
+            self.hud1.kill()
+
     def draw(self):
 
         self.ui_group.draw(self.display)
-
+    def update(self):
+        self.count_lifes()
 
 
 class Level:
@@ -70,6 +91,17 @@ class Level:
     def next_stage(self):
         if self.player.rect.colliderect(self.finish.rect):
             self.active = False
+
+    def reset_position(self):
+        if self.player.rect.y > HEIGHT:
+            self.player.rect.x = 0
+            self.player.rect.y = 0
+
+            self.hud_ui.lifes -=1
+
+        if self.hud_ui.lifes <=0:
+            self.gameover = True
+
 
     def draw(self):
         self.all_sprites.costum_draw(self.player)
@@ -108,7 +140,8 @@ class Level:
     def update(self):
         self.all_sprites.update()
         self.next_stage()
-        # self.hud_ui.update()
+        self.reset_position()
+        self.hud_ui.update()
         # self.colision()
         # self.gameover()
         # return super().update()
